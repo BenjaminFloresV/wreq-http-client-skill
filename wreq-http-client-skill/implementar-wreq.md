@@ -43,6 +43,7 @@ Always, before writing any code:
 - If the user provides a cURL command, extract: method, URL, headers, body, cookies, and proxies, and map them faithfully to wreq.
 - Preserve the original header order (`orig_headers=True`) if the context requires it (e.g. bot detection bypass).
 - For proxies, use the `proxies={"http": "...", "https": "..."}` parameter.
+- The response object uses `resp.status` (not `resp.status_code`) for the HTTP status code.
 
 ## Base structure
 
