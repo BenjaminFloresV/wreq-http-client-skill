@@ -41,9 +41,12 @@ Always, before writing any code:
 - Always use the async client (`Client`) unless the user explicitly requests a blocking one (available in `wreq.blocking`).
 - Always specify an `emulation` to control the TLS/HTTP2 fingerprint. Default to `Emulation.Firefox149` unless the context indicates another browser or client.
 - If the user provides a cURL command, extract: method, URL, headers, body, cookies, and proxies, and map them faithfully to wreq.
-- Preserve the original header order (`orig_headers=True`) if the context requires it (e.g. bot detection bypass).
-- For proxies, use the `proxies={"http": "...", "https": "..."}` parameter.
+- `orig_headers=True` preserves header order but is only supported on WebSocket calls, not regular HTTP requests — do not use it with `.get()`, `.post()`, etc.
+- For proxies, import `Proxy` from `wreq` and pass a list. Use `Proxy.all(url)` for HTTPS traffic (handles the CONNECT tunnel); use `Proxy.http(url)` only for plain HTTP. Example: `proxies=[Proxy.all("http://user:pass@host:port")]`. Never use a plain dict.
 - The response object uses `resp.status` (not `resp.status_code`) for the HTTP status code.
+- `resp.status` is a `StatusCode` object — call `.as_int()` to get an integer.
+- `resp.cookies` is a `list[Cookie]`, not a dict. Each `Cookie` object has `.name` and `.value` string attributes. To convert to a dict: `{c.name: c.value for c in resp.cookies}`. Never use `dict(resp.cookies)` — it raises `TypeError`.
+- To send cookies on a request, pass them to the `Client` constructor as a plain dict: `Client(cookies={"key": "val"})`. Cookie state is per-client instance.
 
 ## Base structure
 
